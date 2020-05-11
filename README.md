@@ -30,10 +30,8 @@ steps:
     scriptLocation: inlineScript
     inlineScript: |
      set -x
-     subscription=$(az account show --query name | sed -e  "s/\"//g")
-     az acr login --name romdevcontainers
-     
-     docker run --rm -v $(System.DefaultWorkingDirectory)/rangerrom/logstash:/playbooks/ romdevcontainers.azurecr.io/ubuntu-xenia-ansible:latest \
+             
+     docker run --rm -v $(System.DefaultWorkingDirectory)/rangerrom/logstash:/playbooks/ romiko/ansible:latest \
       "cd  /playbooks/ansible; ansible-playbook --version; az login --service-principal --username $servicePrincipalId --password $servicePrincipalKey --tenant $tenantId; az account set --subscription $subscription;ansible-playbook logstash-playbook.yaml -i inventory_$(env)_azure_rm.yml --extra-vars \"ansible_ssh_pass=$(clientpassword)\""
     addSpnToEnvironment: true
     workingDirectory: '$(System.DefaultWorkingDirectory)/rangerrom/logstash/ansible'`
