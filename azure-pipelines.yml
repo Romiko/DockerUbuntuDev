@@ -1,0 +1,31 @@
+queue:
+  name: PlatformLinuxAgentsPool
+
+variables:
+  registry: 'romdevcontainers'
+
+steps:
+  - task: Docker@2
+    displayName: "Docker Registry Login"
+    inputs:
+      containerRegistry: '$(registry)'
+      command: login
+
+  - task: Docker@2
+    displayName: 'Build and push ubuntu-xenial ansible image'
+    inputs:
+      action: 'buildAndPush'
+      containerRegistry: '$(registry)'
+      dockerFile: './ubuntu-xenial/Dockerfile'
+      buildContext: './ubuntu-xenial'
+      repository: 'ubuntu-xenia-ansible'
+      tags: |
+        1.$(Build.BuildId)-ansible
+        ansible
+        latest
+
+  - task: Docker@2
+    displayName: Logout
+    inputs:
+      command: logout
+      containerRegistry: '$(registry)'
